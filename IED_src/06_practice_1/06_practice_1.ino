@@ -7,7 +7,7 @@ void setup(){
 }
 
 void loop(){
-    alalogWrite(led, brightless);
+    analogWrite(led, brightness);
 
     brightness = brightness + faeAmount;
 
