@@ -47,6 +47,7 @@ void loop() {
   } else if (200 < distance && distance < 300) {
     analogWrite(PIN_LED, 255 * ((distance - 200) / 100));   
   }else{
+    rev_dis = distance;
     analogWrite(PIN_LED, 255);
   }
 
@@ -55,8 +56,6 @@ void loop() {
   Serial.print(",distance:");  Serial.print(distance);
   Serial.print(",Max:");       Serial.print(_DIST_MAX);
   Serial.println("");
-
-  rev_dis = distance;
   
   // update last sampling time
   last_sampling_time += INTERVAL;
