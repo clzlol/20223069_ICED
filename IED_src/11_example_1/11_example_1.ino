@@ -10,8 +10,8 @@
 #define SND_VEL 346.0     // sound velocity at 24 celsius degree (unit: m/sec)
 #define INTERVAL 25      // sampling interval (unit: msec)
 #define PULSE_DURATION 10 // ultra-sound Pulse Duration (unit: usec)
-#define _DIST_MIN 180.0   // minimum distance to be measured (unit: mm)
-#define _DIST_MAX 360.0   // maximum distance to be measured (unit: mm)
+#define _DIST_MIN 100.0   // minimum distance to be measured (unit: mm)
+#define _DIST_MAX 450.0   // maximum distance to be measured (unit: mm)
 
 #define TIMEOUT ((INTERVAL / 2) * 1000.0) // maximum echo waiting time (unit: usec)
 #define SCALE (0.001 * 0.5 * SND_VEL) // coefficent to convert duration to distance
@@ -21,7 +21,7 @@
 
 // Target Distance
 #define _TARGET_LOW  180.0
-#define _TARGET_HIGH 220.0
+#define _TARGET_HIGH 360.0
 
 // duty duration for myservo.writeMicroseconds()
 // NEEDS TUNING (servo by servo)
@@ -63,14 +63,12 @@ void loop() {
   dist_raw = USS_measure(PIN_TRIG, PIN_ECHO); // read distance
 
   // add your code here!
+
     if (dist_raw < _DIST_MIN) {
     dist_raw = dist_prev;
-    digitalWrite(PIN_LED, 1);
   } else if (dist_raw > _DIST_MAX) {
     dist_raw = dist_prev;
-    digitalWrite(PIN_LED, 1); 
   } else {
-    digitalWrite(PIN_LED, 0);
     dist_prev = dist_raw;
   }
   // Apply ema filter here  
@@ -78,14 +76,18 @@ void loop() {
 
   // adjust servo position according to the USS read value
 
-  
-  if (dist_ema < _DIST_MIN) {
+  if (dist_ema <=_TARGET_LOW) {
+    digitalWrite(PIN_LED, 1);
     myservo.writeMicroseconds(_DUTY_MIN);
-  } else if (dist_ema > _DIST_MAX) {
+  } else if (dist_ema >= _TARGET_HIGH) {
+    digitalWrite(PIN_LED, 1);    
     myservo.writeMicroseconds(_DUTY_MAX);
   } else {
+    digitalWrite(PIN_LED, 0);
     myservo.writeMicroseconds(1860*(dist_ema-180)/180+550);
   }
+  
+
 
   
   // Use _TARGET_LOW, _TARGTE_HIGH
